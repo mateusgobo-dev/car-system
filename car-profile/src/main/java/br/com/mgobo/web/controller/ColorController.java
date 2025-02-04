@@ -35,6 +35,6 @@ public class ColorController {
 
     @PutMapping
     public ResponseEntity<?> update(@RequestBody ColorDto color) {
-        return colorService.save(INSTANCE.toEntity(color));
+        return colorService.update(INSTANCE.toEntity(color));
     }
 }

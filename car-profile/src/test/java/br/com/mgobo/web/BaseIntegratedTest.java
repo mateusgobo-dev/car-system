@@ -6,6 +6,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 public class BaseIntegratedTest {
+    protected  final String ERROR_REQUEST  = "Erro na requisição %s, status %s";
     protected static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>(DockerImageName.parse("postgres"))
             .withDatabaseName("carsystem-db")
             .withUsername("sa")
@@ -16,6 +17,7 @@ public class BaseIntegratedTest {
         registry.add("spring.datasource.url", ()-> postgreSQLContainer.getJdbcUrl());
         registry.add("spring.datasource.username", ()-> postgreSQLContainer.getUsername());
         registry.add("spring.datasource.password", ()-> postgreSQLContainer.getPassword());
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "update");
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create");
+        registry.add("spring.jpa.show-sql", () -> true);
     }
 }

@@ -6,8 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static br.com.mgobo.api.HttpErrorsMessage.*;
 
@@ -18,19 +21,24 @@ public class ColorService {
 
     public ResponseEntity<?> save(Color color) {
         try {
-            colorRepository.saveAndFlush(color);
-            return ResponseEntity.created(new URI("/find/%s".formatted(color.id()))).body(CREATED.getMessage().formatted(color.description()));
+            color.setCreatedAt(LocalDateTime.now());
+            color.setUpdatedAt(LocalDateTime.now());
+            color = colorRepository.save(color);
+            return ResponseEntity.created(new URI("/find/%s".formatted(color.getId()))).body(CREATED.getMessage().formatted(color.getDescription()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("ColorService[findAll]", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("ColorService[save]", e.getMessage()));
         }
     }
 
     public ResponseEntity<?> update(Color color) {
         try {
-            colorRepository.saveAndFlush(color);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(ACCEPTED.getMessage().formatted(color.description()));
+            Color colorUpdate = Optional.of(this.colorRepository.findById(color.getId())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)).get();
+            colorUpdate.setDescription(color.getDescription());
+            colorUpdate.setUpdatedAt(LocalDateTime.now());
+            color = colorRepository.save(colorUpdate);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(ACCEPTED.getMessage().formatted(color.getDescription()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("ColorService[findAll]", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("ColorService[update]", e.getMessage()));
         }
     }
 

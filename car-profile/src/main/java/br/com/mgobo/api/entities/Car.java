@@ -1,25 +1,33 @@
 package br.com.mgobo.api.entities;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.io.Serializable;
 
+@Getter
+@Setter
+@RequiredArgsConstructor
+@AllArgsConstructor
+
 @Entity
 @Table(name = "car")
-@SequenceGenerator(sequenceName = "car_seq", name = "car_seq", allocationSize = 1)
-public record Car (
-        @Id
-        Long id,
-        String vehicle,
-        String potency,
+@SequenceGenerator(name = "default_seq", sequenceName = "car_seq", allocationSize = 1)
+public class Car extends BaseEntity implements Serializable {
 
-        @JoinColumn(referencedColumnName = "id", name = "colorId")
-        @ManyToOne
-        Color color,
-
-        @JoinColumn(referencedColumnName = "id", name = "brandCategoryId")
-        @ManyToOne
-         BrandCategory brandCategory
-) implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    @Column(nullable = false)
+    private String vehicle;
+
+    @Column(nullable = false)
+    private String potency;
+
+    @JoinColumn(referencedColumnName = "id", name = "colorId")
+    @ManyToOne
+    private Color color;
+
+    @JoinColumn(referencedColumnName = "id", name = "brandCategoryId")
+    @ManyToOne
+    private BrandCategory brandCategory;
 }

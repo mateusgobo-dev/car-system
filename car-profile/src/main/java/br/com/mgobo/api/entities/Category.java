@@ -1,22 +1,23 @@
 package br.com.mgobo.api.entities;
 
 import jakarta.persistence.*;
-import lombok.Builder;
+import lombok.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
-@Builder
-@Entity(name = "category")
-@SequenceGenerator(name = "category_seq", sequenceName = "category_seq", allocationSize = 1)
-public record Category(
-        @Id
-        @GeneratedValue(generator = "category_seq")
-        Long id,
-        String name,
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 
-        @ManyToMany(mappedBy = "category")
-        Set<BrandCategory> brandCategoryCollection
-) implements Serializable {
+@Entity
+@Table(name = "category")
+@SequenceGenerator(name = "default_seq", sequenceName = "category_seq", allocationSize = 1)
+public class Category extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
+
+    @Column(nullable = false)
+    private String name;
 }
