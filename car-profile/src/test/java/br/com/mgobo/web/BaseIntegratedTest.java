@@ -17,7 +17,11 @@ public class BaseIntegratedTest {
         registry.add("spring.datasource.url", ()-> postgreSQLContainer.getJdbcUrl());
         registry.add("spring.datasource.username", ()-> postgreSQLContainer.getUsername());
         registry.add("spring.datasource.password", ()-> postgreSQLContainer.getPassword());
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create");
+        registry.add("spring.datasource.hikari.maximum-pool-size", () -> 100);
+        registry.add("spring.datasource.hikari.minimum-idle", () -> 10);
+        registry.add("spring.datasource.hikari.pool-name", () -> "car-profile");
+        registry.add("spring.datasource.hikari.max-lifetime", () -> 30000);
+        registry.add("spring.jpa.hibernate.ddl-auto", ()-> "create");
         registry.add("spring.jpa.show-sql", () -> true);
     }
 }

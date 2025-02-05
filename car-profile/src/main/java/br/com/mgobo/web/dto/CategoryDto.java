@@ -1,10 +1,7 @@
 package br.com.mgobo.web.dto;
 
-import lombok.Builder;
-
 import java.io.Serializable;
 
-@Builder
 public record CategoryDto(
         Long id,
         String name

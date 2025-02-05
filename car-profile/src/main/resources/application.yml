@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: car-profile
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: sa
+    password: 123
+    url: jdbc:postgresql://localhost:5434/carsystem-db
+    hikari:
+      maximum-pool-size: 100
+      minimum-idle: 10
+      pool-name: car-profile
+      max-lifetime: 10000
+  jpa:
+    hibernate:
+      ddl-auto: create
+  data:
+    jdbc:
+      dialect: postgresql

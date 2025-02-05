@@ -1,12 +1,14 @@
 package br.com.mgobo.web.controller;
 
+import br.com.mgobo.api.entities.Brand;
+import br.com.mgobo.api.entities.Category;
+import br.com.mgobo.api.repository.BrandRepository;
+import br.com.mgobo.api.repository.CategoryRepository;
 import br.com.mgobo.web.BaseIntegratedTest;
-import br.com.mgobo.web.dto.ColorDto;
+import br.com.mgobo.web.dto.BrandCategoryDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.http.client.HttpClientProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -14,17 +16,26 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static br.com.mgobo.api.parsers.ParserObject.parserObject;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ColorControllerTest extends BaseIntegratedTest {
+public class BrandCategoryControllerTest extends BaseIntegratedTest {
 
     private MockMvc mockMvc;
-    private final String url = "/api/v1/color";
+    private final String url = "/api/v1/brandCategory";
+    private Brand brand;
+    private Category category;
 
     @Autowired
-    private ColorController colorController;
+    private BrandCategoryController brandCategoryController;
+
+    @Autowired
+    private BrandRepository brandRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @BeforeAll
     public static void setUpBeforeClass() throws Exception {
@@ -38,16 +49,23 @@ public class ColorControllerTest extends BaseIntegratedTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        mockMvc = MockMvcBuilders.standaloneSetup(colorController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(brandCategoryController).build();
+        Brand brand = new Brand();
+        brand.setName("GM");
+        this.brand = this.brandRepository.save(brand);
+
+        Category category = new Category();
+        category.setName("SUV");
+        this.category = this.categoryRepository.save(category);
     }
 
     @Order(1)
     @Test
     public void testCreate() throws Exception {
-        ColorDto colorDto = new ColorDto(null, "VERMELHO");
+        BrandCategoryDto brandCategoryDto = new BrandCategoryDto(null, category.getId(), brand.getId());
         ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.post(url)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(parserObject.toJson(colorDto)));
+                .content(parserObject.toJson(brandCategoryDto)));
         int status = resultActions.andReturn().getResponse().getStatus();
         try {
             assertEquals(201, status, "Sucesso na requisição");
@@ -59,10 +77,10 @@ public class ColorControllerTest extends BaseIntegratedTest {
     @Order(2)
     @Test
     public void testUpdate() throws Exception {
-        ColorDto colorDto = new ColorDto(1l, "VERMELHO");
+        BrandCategoryDto brandCategoryDto = new BrandCategoryDto(1l, category.getId(), brand.getId());
         ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.put(url)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(parserObject.toJson(colorDto)));
+                .content(parserObject.toJson(brandCategoryDto)));
         int status = resultActions.andReturn().getResponse().getStatus();
         try {
             assertEquals(202, status, "Sucesso na requisição");
@@ -89,10 +107,10 @@ public class ColorControllerTest extends BaseIntegratedTest {
     public void testFindAll() throws Exception {
         ResultActions resultActions = this.mockMvc.perform(MockMvcRequestBuilders.get(url));
         int status = resultActions.andReturn().getResponse().getStatus();
-        try{
+        try {
             assertEquals(200, status, "Sucesso na requisição");
             System.out.println(resultActions.andReturn().getResponse().getContentAsString());
-        }catch (Exception e){
+        } catch (Exception e) {
             fail(ERROR_REQUEST.formatted(e.getMessage(), status));
         }
     }

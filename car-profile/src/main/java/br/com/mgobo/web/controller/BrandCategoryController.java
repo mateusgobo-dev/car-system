@@ -2,16 +2,17 @@ package br.com.mgobo.web.controller;
 
 import br.com.mgobo.api.service.BrandCategoryService;
 import br.com.mgobo.web.dto.BrandCategoryDto;
-import br.com.mgobo.web.dto.BrandDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.Serializable;
 
 import static br.com.mgobo.web.mappers.BrandCategoryMapper.INSTANCE;
 
 @CrossOrigin(value = "http://localhost")
 @RestController
-@RequestMapping("/api/v1/brandcategory")
+@RequestMapping("/api/v1/brandCategory")
 @RequiredArgsConstructor
 public class BrandCategoryController {
 

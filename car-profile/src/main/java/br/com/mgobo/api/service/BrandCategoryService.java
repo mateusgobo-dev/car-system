@@ -33,8 +33,6 @@ public class BrandCategoryService {
     public ResponseEntity<?> update(BrandCategory brandCategory) {
         try {
             BrandCategory brandCategoryUpdate = Optional.of(this.brandCategoryRepository.findById(brandCategory.getId())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)).get();
-            brandCategoryUpdate.setCategory(brandCategory.getCategory());
-            brandCategoryUpdate.setBrand(brandCategory.getBrand());
             brandCategoryUpdate.setUpdatedAt(LocalDateTime.now());
             brandCategory = brandCategoryRepository.save(brandCategoryUpdate);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(ACCEPTED.getMessage().formatted(brandCategory.getCategory().toString() + " x" + brandCategory.getBrand().toString()));
