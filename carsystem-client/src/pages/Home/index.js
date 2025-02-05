@@ -11,7 +11,7 @@ function Home() {
 
     useEffect(() => {
         async function loadCarros() {
-            const response = await carsystem_api.get("/api/v1/cars");
+            const response = await carsystem_api.get("/api/v1/car");
             setCarros(response.data)
             setLoading(false);
         }
@@ -26,14 +26,14 @@ function Home() {
     }
     return (
         <div className="container">
-            <div className="lista-filmes">
+            <div className="lista-carros">
+                {carros.length == 0 && <span>Você não possui carros cadastrados...</span>}
+                {carros.length == 0 && <Link to="/create">Novo carro</Link>}
                 {carros.map((carro) => {
                     return (
                         <article key={carro.id}>
-                            <strong>{carro.title}</strong>
-                            <img src={`${carro.image}`}
-                                 alt={carro.title}/>
-                            <strong>R$ {carro.price}</strong>
+                            <strong>{carro.vehicle}</strong>
+                            <strong>R$ {carro.potency}</strong>
                             <Link to={`/carro/${carro.id}`}>Acessar</Link>
                         </article>
                     )

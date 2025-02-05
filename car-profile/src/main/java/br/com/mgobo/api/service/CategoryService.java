@@ -23,7 +23,6 @@ public class CategoryService {
     public ResponseEntity<?> save(Category category) {
         try {
             category.setCreatedAt(LocalDateTime.now());
-            category.setUpdatedAt(LocalDateTime.now());
             category = categoryRepository.save(category);
             return ResponseEntity.created(new URI("/find/%s".formatted(category.getId()))).body(CREATED.getMessage().formatted(category.getName()));
         } catch (Exception e) {
@@ -33,10 +32,8 @@ public class CategoryService {
 
     public ResponseEntity<?> update(Category category) {
         try {
-            Category categoryUpdate = Optional.of(this.categoryRepository.findById(category.getId())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)).get();
-            categoryUpdate.setName(category.getName());
-            categoryUpdate.setUpdatedAt(LocalDateTime.now());
-            category = categoryRepository.save(categoryUpdate);
+            category.setUpdatedAt(LocalDateTime.now());
+            category = categoryRepository.save(category);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(ACCEPTED.getMessage().formatted(category.getName()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("CategoryService[update]", e.getMessage()));

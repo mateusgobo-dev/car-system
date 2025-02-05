@@ -32,10 +32,8 @@ public class ColorService {
 
     public ResponseEntity<?> update(Color color) {
         try {
-            Color colorUpdate = Optional.of(this.colorRepository.findById(color.getId())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)).get();
-            colorUpdate.setDescription(color.getDescription());
-            colorUpdate.setUpdatedAt(LocalDateTime.now());
-            color = colorRepository.save(colorUpdate);
+            color.setUpdatedAt(LocalDateTime.now());
+            color = colorRepository.save(color);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(ACCEPTED.getMessage().formatted(color.getDescription()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("ColorService[update]", e.getMessage()));

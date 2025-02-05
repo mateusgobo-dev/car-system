@@ -22,14 +22,17 @@ function Header(){
 
     return(
         <header>
-            <div style={{float: "left", width: "30%"}}>
-                <Link className="logo" to="/">Car system</Link>
+            <div style={{float: "left", width: "60%"}}>
+                <Link className="logo" to="/" style={{float: "Left"}}>Car system</Link>
+            </div>
+            <div style={{float: "left", width: "20%"}}>
                 {<label className="welcome">Bem vindo(a), {usuario.name}</label>}
             </div>
-            <div style={{float: "right", width: "70%"}}>
-                <Link className="marcas" to="/marcas/list">Marcas</Link>
-                <Link className="autenticar" to="/usuario">Categorias</Link>
-                <Link className="autenticar" to="/usuario">Carros</Link>
+            <div style={{float: "right", width: "20%"}}>
+                <Link className="acessos" to="/cores/list">Cores</Link>
+                <Link className="acessos" to="/marcas/list">Marcas</Link>
+                <Link className="acessos" to="/categorias/list">Categorias</Link>
+                <Link className="acessos" to="/list">Carros</Link>
             </div>
         </header>
 )

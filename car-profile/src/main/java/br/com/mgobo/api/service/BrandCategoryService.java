@@ -32,9 +32,8 @@ public class BrandCategoryService {
 
     public ResponseEntity<?> update(BrandCategory brandCategory) {
         try {
-            BrandCategory brandCategoryUpdate = Optional.of(this.brandCategoryRepository.findById(brandCategory.getId())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)).get();
-            brandCategoryUpdate.setUpdatedAt(LocalDateTime.now());
-            brandCategory = brandCategoryRepository.save(brandCategoryUpdate);
+            brandCategory.setUpdatedAt(LocalDateTime.now());
+            brandCategory = brandCategoryRepository.save(brandCategory);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(ACCEPTED.getMessage().formatted(brandCategory.getCategory().toString() + " x" + brandCategory.getBrand().toString()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("BrandCategoryService[update]", e.getMessage()));

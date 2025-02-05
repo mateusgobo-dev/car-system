@@ -40,10 +40,8 @@ public class BrandService {
 
     public ResponseEntity<?> update(Brand brand) {
         try {
-            Brand brandUpdate = Optional.of(this.brandRepository.findById(brand.getId())).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)).get();
-            brandUpdate.setName(brand.getName());
-            brandUpdate.setUpdatedAt(LocalDateTime.now());
-            brand = brandRepository.save(brandUpdate);
+            brand.setUpdatedAt(LocalDateTime.now());
+            brand = brandRepository.save(brand);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(ACCEPTED.getMessage().formatted(brand.getName()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("BrandService[update]", e.getMessage()));
