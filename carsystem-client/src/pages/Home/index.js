@@ -1,40 +1,40 @@
 import {useEffect, useState} from "react";
-import product_api from "../../services/product_api";
+import carsystem_api from "../../services/carsystem_api";
 import {Link} from "react-router-dom";
 import "./home.css"
 
 
 function Home() {
-    const [produtos, setProdutos] = useState([]);
+    const [carros, setCarros] = useState([]);
     const[loading, setLoading] = useState(true);
 
 
     useEffect(() => {
-        async function loadProdutos() {
-            const response = await product_api.get("/products");
-            setProdutos(response.data)
+        async function loadCarros() {
+            const response = await carsystem_api.get("/api/v1/cars");
+            setCarros(response.data)
             setLoading(false);
         }
-        loadProdutos();
+        loadCarros();
     }, []);
     if(loading){
         return (
             <div className="loading">
-                Carregando produtos ...
+                Carregando lista de carros ...
             </div>
         )
     }
     return (
         <div className="container">
             <div className="lista-filmes">
-                {produtos.map((produto) => {
+                {carros.map((carro) => {
                     return (
-                        <article key={produto.id}>
-                            <strong>{produto.title}</strong>
-                            <img src={`${produto.image}`}
-                                 alt={produto.title}/>
-                            <strong>R$ {produto.price}</strong>
-                            <Link to={`/produto/${produto.id}`}>Acessar</Link>
+                        <article key={carro.id}>
+                            <strong>{carro.title}</strong>
+                            <img src={`${carro.image}`}
+                                 alt={carro.title}/>
+                            <strong>R$ {carro.price}</strong>
+                            <Link to={`/carro/${carro.id}`}>Acessar</Link>
                         </article>
                     )
                 })}

@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 import static br.com.mgobo.web.mappers.BrandCategoryMapper.INSTANCE;
 
-@CrossOrigin(value = "http://localhost")
+@CrossOrigin(value = "*")
 @RestController
 @RequestMapping("/api/v1/brandCategory")
 @RequiredArgsConstructor

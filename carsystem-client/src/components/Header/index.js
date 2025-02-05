@@ -27,8 +27,9 @@ function Header(){
                 {<label className="welcome">Bem vindo(a), {usuario.name}</label>}
             </div>
             <div style={{float: "right", width: "70%"}}>
-                <Link className="favoritos" to="/favoritos">Meus Produtos</Link>
-                <Link className="autenticar" to="/usuario">Acesso</Link>
+                <Link className="marcas" to="/marcas/list">Marcas</Link>
+                <Link className="autenticar" to="/usuario">Categorias</Link>
+                <Link className="autenticar" to="/usuario">Carros</Link>
             </div>
         </header>
 )

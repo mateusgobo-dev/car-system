@@ -5,26 +5,26 @@
     margin-top: 14px;
 }
 
-.favorito{
+.marcas{
     width: 800px;
     margin: 14px auto;
 }
 
-.favorito article{
+.marcas article{
     width: 100%;
     background-color: white;
     padding: 15px;
     border-radius: 4px;
 }
 
-.favorito strong{
+.marcas strong{
     margin-bottom: 14px;
     text-align: center;
     font-size: 22px;
     display: block;
 }
 
-.favorito img {
+.marcas img {
     width: 900px;
     height:350px;
     max-width: 100%;
@@ -35,7 +35,7 @@
     border-top-right-radius: 8px;
 }
 
-.favorito a{
+.marcas a{
     display: flex;
     align-items: center;
     justify-content: center;

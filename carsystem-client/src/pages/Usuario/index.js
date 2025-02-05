@@ -2,7 +2,7 @@ import {React, useEffect, useState} from "react";
 import './usuario-form.css'
 import {Link} from "react-router-dom";
 import {toast} from "react-toastify";
-import customer_api from "../../services/customer_api";
+import carsystem_api from "../../services/carsystem_api";
 
 function Usuario() {
     const [usuario, setUsuario] = useState({});
@@ -33,7 +33,7 @@ function Usuario() {
                     mail: usuario.email,
                     password: usuario.password
                 }
-                await customer_api.post("/api/v1/customers", JSON.stringify(usuarioDto)).then(response => {
+                await carsystem_api.post("/api/v1/customers", JSON.stringify(usuarioDto)).then(response => {
                     toast.info(`Usuario ${usuarioDto.name} criado com sucesso.`);
                     const r = fields.forEach(f => {
                         let values = f.split("-");

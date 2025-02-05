@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static br.com.mgobo.web.mappers.CategoryMapper.INSTANCE;
 
-@CrossOrigin(value = "http://localhost")
+@CrossOrigin(value = "*")
 @RestController
 @RequestMapping("/api/v1/category")
 @RequiredArgsConstructor

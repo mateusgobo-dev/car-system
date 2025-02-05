@@ -31,7 +31,6 @@ public class BrandService {
     public ResponseEntity<?> save(Brand brand) {
         try {
             brand.setCreatedAt(LocalDateTime.now());
-            brand.setUpdatedAt(LocalDateTime.now());
             brand = brandRepository.save(brand);
             return ResponseEntity.created(new URI("/find/%s".formatted(brand.getId()))).body(CREATED.getMessage().formatted(brand.getName()));
         } catch (Exception e) {

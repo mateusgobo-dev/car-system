@@ -1,7 +1,7 @@
 import {React, useEffect, useState} from 'react'
 import {redirect} from "react-router-dom";
 import {toast} from "react-toastify";
-import customer_api from "../../services/customer_api";
+import carsystem_api from "../../services/carsystem_api";
 
 function Autenticar() {
     const profile = localStorage.getItem("@profile")
@@ -29,7 +29,7 @@ function Autenticar() {
             let status = 0;
             async function validarUsuario() {
                 const checkUser = {email: usuario.email, password: usuario.senha}
-                await customer_api.post("api/v1/customers/check", JSON.stringify(checkUser))
+                await carsystem_api.post("api/v1/customers/check", JSON.stringify(checkUser))
                     .then(response => {
                         status = response.status;
                         if (status == 404) toast.error(response.data);
