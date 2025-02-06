@@ -1,19 +1,19 @@
 package br.com.mgobo.api.service;
 
-import br.com.mgobo.api.entities.Brand;
 import br.com.mgobo.api.entities.Category;
 import br.com.mgobo.api.repository.CategoryRepository;
+import br.com.mgobo.web.mappers.CategoryMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static br.com.mgobo.api.HttpErrorsMessage.*;
+import static br.com.mgobo.web.mappers.CategoryMapper.INSTANCE;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +42,7 @@ public class CategoryService {
 
     public ResponseEntity<?> findAll() {
         try {
-            return ResponseEntity.ok(categoryRepository.findAll());
+            return ResponseEntity.ok(categoryRepository.findAll().stream().map(INSTANCE::toDto).toList());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("CategoryService[findAll]", e.getMessage()));
         }
@@ -50,7 +50,7 @@ public class CategoryService {
 
     public ResponseEntity<?> findById(Long id) {
         try {
-            return ResponseEntity.ok(categoryRepository.findById(id));
+            return ResponseEntity.ok(INSTANCE.toDto(categoryRepository.findById(id).orElseThrow(() -> new RuntimeException(NOT_FOUND.getMessage()))));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("CategoryService[findById %s]".formatted(id), e.getMessage()));
         }

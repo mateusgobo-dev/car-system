@@ -10,9 +10,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static br.com.mgobo.api.HttpErrorsMessage.*;
+import static br.com.mgobo.web.mappers.ColorMapper.INSTANCE;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +42,7 @@ public class ColorService {
 
     public ResponseEntity<?> findAll() {
         try {
-            return ResponseEntity.ok(colorRepository.findAll());
+            return ResponseEntity.ok(colorRepository.findAll().stream().map(INSTANCE::toDto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("ColorService[findAll]", e.getMessage()));
         }
@@ -50,7 +50,7 @@ public class ColorService {
 
     public ResponseEntity<?> findById(Long id) {
         try {
-            return ResponseEntity.ok(colorRepository.findById(id));
+            return ResponseEntity.ok(INSTANCE.toDto(colorRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND))));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("ColorService[findById %s]".formatted(id), e.getMessage()));
         }

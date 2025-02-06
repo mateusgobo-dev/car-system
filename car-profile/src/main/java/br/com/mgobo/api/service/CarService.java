@@ -2,9 +2,9 @@ package br.com.mgobo.api.service;
 
 import br.com.mgobo.api.entities.*;
 import br.com.mgobo.api.repository.BrandCategoryRepository;
-import br.com.mgobo.api.repository.BrandRepository;
 import br.com.mgobo.api.repository.CarRepository;
 import br.com.mgobo.api.repository.ColorRepository;
+import br.com.mgobo.web.mappers.CarMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static br.com.mgobo.api.HttpErrorsMessage.*;
+import static br.com.mgobo.web.mappers.CarMapper.INSTANCE;
 
 @Service
 @RequiredArgsConstructor
@@ -33,10 +33,12 @@ public class CarService {
     private final EntityManagerFactory entityManagerFactory;
 
     private BrandCategory findBrandCategoryByBrandAndCategory(Car car) {
-        Brand brand = new Brand(); brand.setId(car.getBrandCategory().getBrand().getId());
-        Category category = new Category(); category.setId(car.getBrandCategory().getCategory().getId());
+        Brand brand = new Brand();
+        brand.setId(car.getBrandCategory().getBrand().getId());
+        Category category = new Category();
+        category.setId(car.getBrandCategory().getCategory().getId());
         BrandCategory brandCategory = brandCategoryRepository.findByBrandAndCategory(brand, category);
-        if(brandCategory == null) {
+        if (brandCategory == null) {
             brandCategory = new BrandCategory();
             brandCategory.setBrand(brand);
             brandCategory.setCategory(category);
@@ -75,7 +77,7 @@ public class CarService {
             CriteriaQuery<Car> criteriaQuery = criteriaBuilder.createQuery(Car.class);
             Root<Car> carRoot = criteriaQuery.from(Car.class);
             List<Car> carCollection = entityManager.createQuery(criteriaQuery.select(carRoot)).getResultList();
-            return ResponseEntity.ok(carCollection);
+            return ResponseEntity.ok(carCollection.stream().map(INSTANCE::toDto));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("CarService[findAll]", e.getMessage()));
         } finally {
@@ -91,8 +93,8 @@ public class CarService {
             CriteriaQuery<Car> criteriaQuery = criteriaBuilder.createQuery(Car.class);
             Root<Car> carRoot = criteriaQuery.from(Car.class);
             Optional<TypedQuery<Car>> car = Optional.ofNullable(entityManager.createQuery(criteriaQuery.select(carRoot).where(criteriaBuilder.equal(carRoot.get(Car_.id), id))));
-            if(car.isPresent()) {
-                return ResponseEntity.ok(car.get().getSingleResult());
+            if (car.isPresent()) {
+                return ResponseEntity.ok(INSTANCE.toDto(car.get().getSingleResult()));
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND.getMessage());
         } catch (Exception e) {

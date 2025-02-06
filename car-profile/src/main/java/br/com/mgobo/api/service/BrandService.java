@@ -3,6 +3,7 @@ package br.com.mgobo.api.service;
 import br.com.mgobo.api.entities.Brand;
 import br.com.mgobo.api.entities.Brand_;
 import br.com.mgobo.api.repository.BrandRepository;
+import br.com.mgobo.web.mappers.BrandMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
@@ -55,7 +56,7 @@ public class BrandService {
             CriteriaQuery<Brand> criteriaQuery = criteriaBuilder.createQuery(Brand.class);
             Root<Brand> brandRoot = criteriaQuery.from(Brand.class);
             List<Brand> brandCollection = entityManager.createQuery(criteriaQuery.select(brandRoot)).getResultList();
-            return ResponseEntity.ok(brandCollection);
+            return ResponseEntity.ok(brandCollection.stream().map(brand -> BrandMapper.INSTANCE.toDto(brand)).toList());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(BAD_REQUEST.getMessage().formatted("BrandService[findAll]", e.getMessage()));
         } finally {
@@ -72,7 +73,7 @@ public class BrandService {
             Root<Brand> brandRoot = criteriaQuery.from(Brand.class);
             Optional<TypedQuery<Brand>> brand = Optional.ofNullable(entityManager.createQuery(criteriaQuery.select(brandRoot).where(criteriaBuilder.equal(brandRoot.get(Brand_.id), id))));
             if(brand.isPresent()) {
-                return ResponseEntity.ok(brand.get().getSingleResult());
+                return ResponseEntity.ok(BrandMapper.INSTANCE.toDto(brand.get().getSingleResult()));
             }
             return null;
         } catch (Exception e) {
