@@ -4,6 +4,7 @@ import br.com.mgobo.api.entities.*;
 import br.com.mgobo.api.repository.BrandCategoryRepository;
 import br.com.mgobo.api.repository.BrandRepository;
 import br.com.mgobo.api.repository.CarRepository;
+import br.com.mgobo.api.repository.ColorRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
@@ -28,12 +29,19 @@ import static br.com.mgobo.api.HttpErrorsMessage.*;
 public class CarService {
     private final CarRepository carRepository;
     private final BrandCategoryRepository brandCategoryRepository;
+    private final ColorRepository colorRepository;
     private final EntityManagerFactory entityManagerFactory;
 
     private BrandCategory findBrandCategoryByBrandAndCategory(Car car) {
         Brand brand = new Brand(); brand.setId(car.getBrandCategory().getBrand().getId());
         Category category = new Category(); category.setId(car.getBrandCategory().getCategory().getId());
         BrandCategory brandCategory = brandCategoryRepository.findByBrandAndCategory(brand, category);
+        if(brandCategory == null) {
+            brandCategory = new BrandCategory();
+            brandCategory.setBrand(brand);
+            brandCategory.setCategory(category);
+            brandCategory = this.brandCategoryRepository.save(brandCategory);
+        }
         return brandCategory;
     }
 
@@ -51,6 +59,7 @@ public class CarService {
     public ResponseEntity<?> update(Car car) {
         try {
             car.setBrandCategory(this.findBrandCategoryByBrandAndCategory(car));
+            car.setColor(this.colorRepository.findById(car.getColor().getId()).get());
             car.setUpdatedAt(LocalDateTime.now());
             car = carRepository.save(car);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(ACCEPTED.getMessage().formatted(car.getVehicle()));

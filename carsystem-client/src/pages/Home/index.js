@@ -70,44 +70,66 @@ function Home() {
     recuperarMarcas();
 
     const {rule} = useParams();
+    const [id, setId] = useState(0);
     const [carros, setCarros] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [cores] = useState(JSON.parse(localStorage.getItem("@cores")));
-    const [marcas] = useState(JSON.parse(localStorage.getItem("@marcas")));
-    const [categorias] = useState(JSON.parse(localStorage.getItem("@categorias")));
+    const [colors] = useState(JSON.parse(localStorage.getItem("@cores")));
+    const [brands] = useState(JSON.parse(localStorage.getItem("@marcas")));
+    const [categories] = useState(JSON.parse(localStorage.getItem("@categorias")));
     const [potencia, setPotencia] = useState("");
     const [veiculo, setVeiculo] = useState("");
+    const [cor, setCor] = useState(0);
+    const [marca, setMarca] = useState(0);
+    const [categoria, setCategoria] = useState(0);
+    const [exibirNovoCarro, setExibirNovoCarro] = useState(true);
 
     useEffect(() => {
-        async function loadCarros() {
-            const response = await carsystem_api.get("/api/v1/car");
-            setCarros(response.data)
+        console.log(rule)
+        if (rule === undefined || rule === 'list' || rule === '/') {
+            async function loadCarros() {
+                const response = await carsystem_api.get("/api/v1/car");
+                setCarros(response.data)
+                setLoading(false);
+            }
+
+            loadCarros();
+            if (colors !== null && colors.length > 0) {
+                setCor(parseInt(JSON.stringify(colors[0].id)));
+            }
+            if (marca !== null && brands.length > 0) {
+                setMarca(parseInt(JSON.stringify(brands[0].id)));
+            }
+            if (categories !== null && categories.length > 0) {
+                setCategoria(parseInt(JSON.stringify(categories[0].id)));
+            }
+            setExibirNovoCarro((colors !== null && colors.length > 0) && (brands !== null && brands.length > 0) && (categories !== null && categories.length > 0));
+        } else if (rule === 'create') {
+            setLoading(false)
+        } else if (rule === 'edit') {
+            const carEdit = localStorage.getItem("@car");
+            if (carEdit !== undefined && carEdit !== '') {
+                let carEditAsObject = JSON.parse(carEdit);
+                setId(carEditAsObject.id);
+                setPotencia(carEditAsObject.potency);
+                setVeiculo(carEditAsObject.vehicle);
+                setCor(carEditAsObject.color.id)
+                setMarca(carEditAsObject.brandCategory.brand.id)
+                setCategoria(carEditAsObject.brandCategory.category.id);
+            }
             setLoading(false);
         }
-        loadCarros();
-    }, [rule]);
+    }, [rule, brands, categories, colors, marca, cor, categoria]);
 
-    let cor = 0;
-    let marca = 0;
-    let categoria = 0;
-
-    function selecionarCor(value) {
-        cor = value;
-    }
-
-    function selecionarMarca(value) {
-        marca = value;
-    }
-
-    function selecionarCategoria(value) {
-        categoria = value;
+    function editCarro(carro) {
+        localStorage.setItem("@car", JSON.stringify(carro));
+        window.location.href = '/edit';
     }
 
     function salvarCarro() {
         let validarFormulario = validarPreenchimentoFormulario(veiculo, potencia);
         if (validarFormulario) {
             const carDto = {
-                id: null,
+                id: rule === 'edit' ? id : null,
                 vehicle: veiculo,
                 potency: potencia,
                 colorId: cor,
@@ -116,19 +138,33 @@ function Home() {
             }
 
             async function saveCar() {
-                await carsystem_api.post("/api/v1/car", JSON.stringify(carDto))
-                    .then(response => {
-                        if (response.status === 200) {
-                            toast.info(`Veículo ${veiculo} criado com sucesso`);
-                        } else {
-                            toast.error(`Erro ao salvar veículo ${veiculo}, erro => ${response.status} - ${response.statusText}`);
-                        }
-                    })
-                    .catch(reason => {
-                        toast.error(`Erro ao salvar veículo ${veiculo}, erro => ${reason.error}`);
-                    });
+                if(rule === 'create') {
+                    await carsystem_api.post("/api/v1/car", JSON.stringify(carDto))
+                        .then(response => {
+                            if (response.status === 201) {
+                                toast.info(`Veículo ${veiculo} criado com sucesso`);
+                            } else {
+                                toast.error(`Erro ao salvar veículo ${veiculo}, erro => ${response.status} - ${response.statusText}`);
+                            }
+                        })
+                        .catch(reason => {
+                            toast.error(`Erro ao salvar veículo ${veiculo}, erro => ${reason.error}`);
+                        });
+                }else{
+                    await carsystem_api.put("/api/v1/car", JSON.stringify(carDto))
+                        .then(response => {
+                            if (response.status === 202) {
+                                toast.info(`Veículo ${veiculo} alterado com sucesso`);
+                            } else {
+                                toast.error(`Erro ao alterar veículo ${veiculo}, erro => ${response.status} - ${response.statusText}`);
+                            }
+                        })
+                        .catch(reason => {
+                            toast.error(`Erro ao alterar veículo ${veiculo}, erro => ${reason.error}`);
+                        });
+                }
+                window.location.href = '/list';
             }
-
             saveCar();
         }
     }
@@ -143,36 +179,51 @@ function Home() {
     return (
         <div className="container">
             <div className="lista-carros">
-                {rule === 'list'  &&
+                {(rule === 'list' || rule === undefined) &&
                     carros.length === 0 &&
                     <div>
                         <span>Você não possui carros cadastrados...</span><br/>
-                        <Link to="/create">Criar carro</Link>
+                        {exibirNovoCarro ? <Link to="/create">Criar carro</Link> :
+                            <span>Crie os registros de Cores, Marcas e Categoria para incluir um novo carro!</span>}
                     </div>
                 }
-                {rule === 'list' && carros.length > 0 &&
+                {(rule === 'list' || rule === undefined) && carros.length > 0 &&
                     <div>
                         <Link to="/create" style={{float: 'right'}}>Criar carro</Link>
-                        {carros.map((carro) => {
-                            return (
-                                <article key={carro.id}>
-                                    <strong>{carro.vehicle}</strong>
-                                    <strong>{carro.potency}</strong>
-                                    <Link to={`/carro/${carro.id}`}>Acessar</Link>
-                                </article>
-                            )
-                        })
-                        }
+                        <table className="table table-striped" width={'100%'}>
+                            <thead>
+                            <tr>
+                                <td>Id</td>
+                                <td>Veículo</td>
+                                <td></td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {carros.toSorted((a, b) => a.vehicle.localeCompare(b.vehicle)).map(carro =>
+                                <tr key={carro.id}>
+                                    <td width={'5%'}>{carro.id}</td>
+                                    <td width={'94%'}>{carro.vehicle}<br/>{carro.potency}<br/>{carro.brandCategory.brand.name}<br/>{carro.brandCategory.category.name}<br/>
+                                        {carro.color.description}
+                                    </td>
+                                    <td width={'1%'}>
+                                        <button onClick={() => editCarro(carro)}>Alterar</button>
+                                    </td>
+                                </tr>
+                            )}
+                            </tbody>
+                        </table>
                     </div>
                 }
-                {rule !== 'list'  &&
+                {(rule !== undefined && rule !== 'list') &&
                     <div className="container">
+                        <h1>Registro de Carros</h1>
+                        <Link onClick={() => window.location.href = '/list'} style={{float: 'right'}}>Voltar</Link><br/>
                         <div className="row row-cols-12">
                             <div className="col-md-4">
                                 <label htmlFor="corOption" className="form-label">Selecione a cor</label><br/>
-                                <select name="corOption" className="form-control"
-                                        onChange={(e) => selecionarCor(e.target.value)}>
-                                    {cores.map((cor) => {
+                                <select name="corOption" id="cor" className="form-control"
+                                        onChange={(e) => setCor(e.target.value)}>
+                                    {colors.map((cor) => {
                                         return (
                                             <option key={cor.id} value={cor.id}>{cor.description}</option>
                                         )
@@ -181,9 +232,9 @@ function Home() {
                             </div>
                             <div className="col-md-4">
                                 <label htmlFor="marcaOption" className="form-label">Selecione a marca</label><br/>
-                                <select name="marcaOption" className="form-control"
-                                        onChange={(e) => selecionarMarca(e.target.value)}>
-                                    {marcas.map((marca) => {
+                                <select name="marcaOption" id="marca" className="form-control"
+                                        onChange={(e) => setMarca(e.target.value)}>
+                                    {brands.map((marca) => {
                                         return (
                                             <option key={marca.id} value={marca.id}>{marca.name}</option>
                                         )
@@ -193,9 +244,9 @@ function Home() {
                             <div className="col-md-4">
                                 <label htmlFor="categoriaOption" className="form-label">Selecione a
                                     categoria</label><br/>
-                                <select name="categoriaOption" className="form-control"
-                                        onChange={(e) => selecionarCategoria(e.target.value)}>
-                                    {categorias.map((categoria) => {
+                                <select name="categoriaOption" id="categoria" className="form-control"
+                                        onChange={(e) => setCategoria(e.target.value)}>
+                                    {categories.map((categoria) => {
                                         return (
                                             <option key={categoria.id}
                                                     value={categoria.id}>{categoria.name}</option>
@@ -207,12 +258,12 @@ function Home() {
                         <div className="row row-cols-12">
                             <div className="col-md-8">
                                 <label htmlFor="veiculo" className="form-label">Veículo</label>
-                                <input type="text" className="form-control" id="veiculo"
+                                <input type="text" className="form-control" id="veiculo" value={veiculo}
                                        onChange={(e) => setVeiculo(e.target.value)}/>
                             </div>
                             <div className="col-md-4">
                                 <label htmlFor="potencia" className="form-label">Potência</label>
-                                <input type="text" className="form-control" id="potencia"
+                                <input type="text" className="form-control" id="potencia" value={potencia}
                                        onChange={(e) => setPotencia(e.target.value)}/>
                             </div>
                         </div>
@@ -225,4 +276,5 @@ function Home() {
         </div>
     )
 }
+
 export default Home;
