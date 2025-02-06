@@ -27,8 +27,8 @@ docker run --rm  --name carsystem-db \
 ```
 2. Na raíz do projeto **car-profile**, execute o arquivo comando:   
 ```
-mvn clean
-mvn install
+mvn clean ou ./mvnw clean
+mvn install -DskipTests=true  ou ./mvnw install -DskipTests=true 
 java -jar car-profile-0.0.1-SNAPSHOT.jar
 ```
 3. Na raíz do projeto **carsystem-client**, execute o comando:
