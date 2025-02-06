@@ -17,7 +17,7 @@ public class CarController {
     private final CarService carService;
 
     @GetMapping
-    public ResponseEntity<?> getBrands() {
+    public ResponseEntity<?> getCars() {
         return carService.findAll();
     }
 

@@ -11,8 +11,7 @@ function Cores() {
     const [id, setId] = useState(0);
     const [cor, setCor] = useState("");
     const [loading, setLoading] = useState(true);
-    const profile = localStorage.getItem("@profile")
-
+    // const profile = localStorage.getItem("@profile")
     // if(profile === null){
     //     toast.warn("Realize seu cadastro ou efetue o login para acessar as áreas do sistema...");
     //     setTimeout(redirectToUser, 3000);
@@ -26,6 +25,8 @@ function Cores() {
                         .then(response => {
                             setCores(response.data);
                             setLoading(false);
+
+                            localStorage.setItem("@cores", JSON.stringify(cores))
                         })
                         .catch(reason => {
                             toast.error(`Falha na abertura das cores, erro ${reason.error}`)
@@ -43,11 +44,12 @@ function Cores() {
                     setId(corEditAsObject.id);
                     setCor(corEditAsObject.description)
                 }
-                setLoading(false)
+                setLoading(false);
+                break;
             default :
                 break;
         }
-    }, [cores]);
+    }, [cores, rule]);
 
     function salvarCor() {
         if (cor === undefined || cor === '') {
@@ -117,9 +119,9 @@ function Cores() {
                 </div>
             }
             {rule === 'list' && cores.length > 0 &&
-                <div>
+                <div className="container-fluid">
                     <Link to="/cores/create" style={{float: 'right'}}>Criar cor</Link>
-                    <table width={'100%'}>
+                    <table className="table table-striped" width={'100%'}>
                         <thead>
                         <tr>
                             <td>Id</td>
@@ -142,7 +144,7 @@ function Cores() {
                 </div>
             }
             {rule !== 'list' &&
-                <div>
+                <div className="container-fluid">
                     <h1>Registro de Cores</h1>
                     <Link onClick={() => window.location.href = '/cores/list'}
                           style={{float: 'right'}}>Voltar</Link>

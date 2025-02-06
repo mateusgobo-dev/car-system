@@ -11,8 +11,8 @@ function Marcas() {
     const [id, setId] = useState(0);
     const [marca, setMarca] = useState("");
     const [loading, setLoading] = useState(true);
-    const profile = localStorage.getItem("@profile")
 
+    // const profile = localStorage.getItem("@profile")
     // if(profile === null){
     //     toast.warn("Realize seu cadastro ou efetue o login para acessar as áreas do sistema...");
     //     setTimeout(redirectToUser, 3000);
@@ -21,17 +21,18 @@ function Marcas() {
     useEffect(() => {
         switch (rule) {
             case 'list':
+                async function recuperarMarcas() {
+                    await carsystem_api.get("/api/v1/brand")
+                        .then(response => {
+                            setMarcas(response.data);
+                            setLoading(false);
 
-            async function recuperarMarcas() {
-                await carsystem_api.get("/api/v1/brand")
-                    .then(response => {
-                        setMarcas(response.data);
-                        setLoading(false);
-                    })
-                    .catch(reason => {
-                        toast.error(`Falha na abertura das marcas, erro ${reason.error}`)
-                    });
-            }
+                            localStorage.setItem("@marcas", JSON.stringify(marcas))
+                        })
+                        .catch(reason => {
+                            toast.error(`Falha na abertura das marcas, erro ${reason.error}`)
+                        });
+                }
 
                 recuperarMarcas();
                 break;
@@ -46,10 +47,11 @@ function Marcas() {
                     setMarca(marcaEditAsObject.name)
                 }
                 setLoading(false)
+                break;
             default :
                 break;
         }
-    }, [marcas]);
+    }, [marcas, rule]);
 
     function salvarMarca() {
         if (marca === undefined || marca === '') {
@@ -120,7 +122,7 @@ function Marcas() {
             {rule === 'list' && marcas.length > 0 &&
                 <div>
                     <Link to="/marcas/create" style={{float: 'right'}}>Criar marca</Link>
-                    <table width={'100%'}>
+                    <table className="table table-striped" width={'100%'}>
                         <thead>
                         <tr>
                             <td>Id</td>

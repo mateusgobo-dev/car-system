@@ -11,8 +11,7 @@ function Categorias() {
     const [id, setId] = useState(0);
     const [categoria, setCategoria] = useState("");
     const [loading, setLoading] = useState(true);
-    const profile = localStorage.getItem("@profile")
-
+    // const profile = localStorage.getItem("@profile")
     // if(profile === null){
     //     toast.warn("Realize seu cadastro ou efetue o login para acessar as áreas do sistema...");
     //     setTimeout(redirectToUser, 3000);
@@ -26,6 +25,8 @@ function Categorias() {
                         .then(response => {
                             setCategorias(response.data);
                             setLoading(false);
+
+                            localStorage.setItem("@categorias", JSON.stringify(categorias))
                         })
                         .catch(reason => {
                             toast.error(`Falha na abertura das categorias, erro ${reason.error}`)
@@ -43,11 +44,12 @@ function Categorias() {
                     setId(categoriaEditAsObject.id);
                     setCategoria(categoriaEditAsObject.name)
                 }
-                setLoading(false)
+                setLoading(false);
+                break;
             default :
                 break;
         }
-    }, [categorias]);
+    }, [rule, categorias, setCategorias]);
 
     function salvarCategoria() {
         if (categoria === undefined || categoria === '') {
@@ -118,7 +120,7 @@ function Categorias() {
             {rule === 'list' && categorias.length > 0 &&
                 <div>
                     <Link to="/categorias/create" style={{float: 'right'}}>Criar categoria</Link>
-                    <table width={'100%'}>
+                    <table className="table table-striped" width={'100%'}>
                         <thead>
                         <tr>
                             <td>Id</td>

@@ -6,7 +6,6 @@
 }
 
 .lista-carros{
-    width: 800px;
     margin: 14px auto;
 }
 
@@ -40,7 +39,7 @@
     align-items: center;
     justify-content: center;
     padding: 10px 0;
-    font-size: 24px;
+    font-size: 14px;
     background-color: Black;
     text-decoration: none;
     color: white;

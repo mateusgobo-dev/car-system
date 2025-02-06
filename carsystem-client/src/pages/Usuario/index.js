@@ -35,7 +35,7 @@ function Usuario() {
                 }
                 await carsystem_api.post("/api/v1/customers", JSON.stringify(usuarioDto)).then(response => {
                     toast.info(`Usuario ${usuarioDto.name} criado com sucesso.`);
-                    const r = fields.forEach(f => {
+                    fields.forEach(f => {
                         let values = f.split("-");
                         document.getElementById(values[0]).value = '';
                     });
