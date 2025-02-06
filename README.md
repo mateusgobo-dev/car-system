@@ -1,5 +1,14 @@
 # car-system
 Sistema de gestão de carros.   
+
+Tecnologias utilizadas:
+1. JDK 21
+2. SpringBoot
+3. Maven
+4. React
+
+Banco de dados: **POSTGRES**
+
 O sistema foi divido em 2 partes:   
 1. car-profile = Serviço Backend, escrito em **Java com SpringBoot**. Possui testes integrados à container (**100% desacoplado da infraestrutura**)
 2. carsystem-client = Front end escrito em **React**;
@@ -18,6 +27,8 @@ docker run --rm  --name carsystem-db \
 ```
 2. Na raíz do projeto **car-profile**, execute o arquivo comando:   
 ```
+mvn clean
+mvn install
 java -jar car-profile-0.0.1-SNAPSHOT.jar
 ```
 3. Na raíz do projeto **carsystem-client**, execute o comando:
